@@ -4,19 +4,23 @@
 
 @layer base {
   :root {
-    --background: theme('colors.light.background');
-    --foreground: theme('colors.light.foreground');
-    --card: theme('colors.light.card');
-    --primary: theme('colors.light.primary');
-    --secondary: theme('colors.light.secondary');
+    --background: theme('colors.background.light');
+    --foreground: theme('colors.background.dark'); /* Use dark foreground for light theme for contrast */
+    --card: theme('colors.card.light');
+    --primary: theme('colors.primary.light');
+    --secondary: theme('colors.secondary.light');
+    --accent: theme('colors.accent.light');
+    --input-bg: theme('colors.input.light');
   }
 
   .dark {
-    --background: theme('colors.dark.background');
-    --foreground: theme('colors.dark.foreground');
-    --card: theme('colors.dark.card');
-    --primary: theme('colors.dark.primary');
-    --secondary: theme('colors.dark.secondary');
+    --background: theme('colors.background.dark');
+    --foreground: theme('colors.background.light'); /* Use light foreground for dark theme */
+    --card: theme('colors.card.dark');
+    --primary: theme('colors.primary.dark');
+    --secondary: theme('colors.secondary.dark');
+    --accent: theme('colors.accent.dark');
+    --input-bg: theme('colors.input.dark');
   }
 
   body {
