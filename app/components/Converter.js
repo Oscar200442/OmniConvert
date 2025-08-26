@@ -22,7 +22,7 @@ const conversionFactors = {
   Frequency: { Hertz: 1, Kilohertz: 1000, Megahertz: 1000000, Gigahertz: 1000000000 },
   Angle: { Degree: 1, Radian: 57.2958, Gradian: 0.9 },
   Power: { Watt: 1, Kilowatt: 1000, Horsepower: 745.7, FootPound_per_minute: 0.022597 },
-  Currency: { DKK: 1, USD: 6.95, EUR: 7.46, GBP: 8.78, JPY: 0.044, SEK: 0.66, NOK: 0.66, CAD: 5.08, AUD: 4.63 }, // Placeholder: Needs real-time API for accurate conversion
+  Currency: { DKK: 1, USD: 6.95, EUR: 7.46, GBP: 8.78, JPY: 0.044, SEK: 0.66, NOK: 0.66, CAD: 5.08, AUD: 4.63 },
 };
 
 export default function Converter() {
@@ -33,14 +33,15 @@ export default function Converter() {
   const [outputValue, setOutputValue] = useState('');
 
   const units = useMemo(() => Object.keys(conversionFactors[category]), [category]);
-
+  
+  // This is the new, crucial useEffect hook.
+  // It resets the units whenever the category changes.
   useEffect(() => {
-    // Ensure fromUnit and toUnit are valid for the selected category
-    if (!units.includes(fromUnit)) setFromUnit(units[0]);
-    if (!units.includes(toUnit)) setToUnit(units[1] || units[0]);
-  }, [category, units, fromUnit, toUnit]);
-
-
+    const defaultUnits = Object.keys(conversionFactors[category]);
+    setFromUnit(defaultUnits[0]);
+    setToUnit(defaultUnits[1] || defaultUnits[0]);
+  }, [category]);
+  
   useEffect(() => {
     if (inputValue === '' || isNaN(parseFloat(inputValue))) {
       setOutputValue(''); return;
@@ -49,6 +50,7 @@ export default function Converter() {
     let result;
 
     if (category === 'Temperature') {
+      // Add a check to ensure the units are valid before converting
       if (!conversionFactors.Temperature[fromUnit] || !conversionFactors.Temperature[toUnit]) {
         setOutputValue('N/A');
         return;
@@ -65,15 +67,12 @@ export default function Converter() {
       const toFactor = conversionFactors[category][toUnit];
       result = (value * fromFactor) / toFactor;
     }
-
+    
     setOutputValue(result.toLocaleString(undefined, { maximumFractionDigits: 5 }));
   }, [inputValue, fromUnit, toUnit, category]);
 
-  const handleSwap = () => {
-    setFromUnit(toUnit);
-    setToUnit(fromUnit);
-  };
-
+  const handleSwap = () => { setFromUnit(toUnit); setToUnit(fromUnit); };
+  
   return (
     <motion.div
       initial={{ y: 50, opacity: 0 }}
