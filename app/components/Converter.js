@@ -49,4 +49,69 @@ export default function Converter() {
     let result;
 
     if (category === 'Temperature') {
-      if (!conversionFactors.Temperature[fromUnit] || !conversionFactors.Temperature[to
+      if (!conversionFactors.Temperature[fromUnit] || !conversionFactors.Temperature[toUnit]) {
+        setOutputValue('N/A');
+        return;
+      }
+      const toBase = conversionFactors.Temperature[fromUnit].toBase;
+      const fromBase = conversionFactors.Temperature[toUnit].fromBase;
+      result = fromBase(toBase(value));
+    } else {
+      if (!conversionFactors[category][fromUnit] || !conversionFactors[category][toUnit]) {
+        setOutputValue('N/A');
+        return;
+      }
+      const fromFactor = conversionFactors[category][fromUnit];
+      const toFactor = conversionFactors[category][toUnit];
+      result = (value * fromFactor) / toFactor;
+    }
+
+    setOutputValue(result.toLocaleString(undefined, { maximumFractionDigits: 5 }));
+  }, [inputValue, fromUnit, toUnit, category]);
+
+  const handleSwap = () => {
+    setFromUnit(toUnit);
+    setToUnit(fromUnit);
+  };
+
+  return (
+    <motion.div
+      initial={{ y: 50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.4, duration: 0.6 }}
+      className="p-6 md:p-8 bg-[var(--card)] rounded-xl shadow-2xl w-full max-w-2xl mx-auto border border-[var(--secondary)]/[0.2] dark:border-[var(--secondary)]/[0.1] backdrop-blur-md"
+    >
+      <div className="mb-6">
+        <label className="text-sm font-medium text-[var(--secondary)] block mb-2">Category</label>
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full p-3 rounded-lg bg-[var(--input-bg)] border border-[var(--secondary)]/[0.3] dark:border-[var(--secondary)]/[0.4] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all duration-200 shadow-sm appearance-none cursor-pointer">
+          {Object.keys(conversionFactors).map(cat => <option key={cat} value={cat}>{cat}</option>)}
+        </select>
+      </div>
+      <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="w-full">
+          <label className="text-sm font-medium text-[var(--secondary)] block mb-2">From</label>
+          <input type="number" value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="w-full p-3 text-2xl font-bold bg-[var(--input-bg)] border border-[var(--secondary)]/[0.3] dark:border-[var(--secondary)]/[0.4] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all duration-200 shadow-sm" />
+          <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)} className="w-full p-3 mt-3 rounded-lg bg-[var(--input-bg)] border border-[var(--secondary)]/[0.3] dark:border-[var(--secondary)]/[0.4] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all duration-200 shadow-sm appearance-none cursor-pointer">
+            {units.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+          </select>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9, rotate: -90 }}
+          onClick={handleSwap}
+          className="p-3 mt-4 md:mt-8 rounded-full bg-[var(--primary)] text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-[var(--accent)] transition-all duration-300 ease-out"
+          aria-label="Swap units"
+        >
+          <ArrowRightLeft size={24} />
+        </motion.button>
+        <div className="w-full">
+          <label className="text-sm font-medium text-[var(--secondary)] block mb-2">To</label>
+          <input type="text" value={outputValue} readOnly className="w-full p-3 text-2xl font-bold bg-[var(--input-bg)] border border-[var(--secondary)]/[0.3] dark:border-[var(--secondary)]/[0.4] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all duration-200 shadow-sm cursor-not-allowed" />
+          <select value={toUnit} onChange={(e) => setToUnit(e.target.value)} className="w-full p-3 mt-3 rounded-lg bg-[var(--input-bg)] border border-[var(--secondary)]/[0.3] dark:border-[var(--secondary)]/[0.4] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-all duration-200 shadow-sm appearance-none cursor-pointer">
+            {units.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+          </select>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
