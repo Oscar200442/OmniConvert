@@ -1,3 +1,5 @@
+'use client'; // <-- Add this line at the very top
+
 import Header from './components/Header';
 import Converter from './components/Converter';
 import { motion } from 'framer-motion';
