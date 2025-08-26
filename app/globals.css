@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: theme('colors.light.background');
+    --foreground: theme('colors.light.foreground');
+    --card: theme('colors.light.card');
+    --primary: theme('colors.light.primary');
+    --secondary: theme('colors.light.secondary');
+  }
+
+  .dark {
+    --background: theme('colors.dark.background');
+    --foreground: theme('colors.dark.foreground');
+    --card: theme('colors.dark.card');
+    --primary: theme('colors.dark.primary');
+    --secondary: theme('colors.dark.secondary');
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300;
+  }
+}
